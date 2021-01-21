@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { CustomerCenter } from './components/CustomerCenter';
 
 function TabContent(props:any) {
 	switch(props.tabName) {
@@ -11,10 +12,11 @@ function TabContent(props:any) {
 			break;
 		}
 		case "kundencenter": {
-			return <h1>kundencenter</h1>;
+			return <CustomerCenter />;
 			break;
 		}
 		default:
+			//we shouldnt ever be here
 			return <h1>???</h1>;
 			break;
 	}
