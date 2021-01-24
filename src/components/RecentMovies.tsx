@@ -67,7 +67,7 @@ export function RecentMovies() {
 								<Form.Control placeholder="Dauer (in Sek.)" />
 							</Col>
 							<Col>
-								<Form.Control placeholder="Rating" />
+								<Form.Control placeholder="Bewertung" />
 							</Col>
 						</Row>
 					</Form>
