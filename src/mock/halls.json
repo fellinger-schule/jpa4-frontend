@@ -1,0 +1,14 @@
+[
+	{ "id": 1, "location": "A5", "numberOfSeats": 205 },
+	{ "id": 2, "location": "B7", "numberOfSeats": 124 },
+	{ "id": 3, "location": "C3", "numberOfSeats": 214 },
+	{ "id": 4, "location": "F3", "numberOfSeats": 110 },
+	{ "id": 5, "location": "A2", "numberOfSeats": 178 },
+	{ "id": 6, "location": "A1", "numberOfSeats": 49 },
+	{ "id": 7, "location": "B1", "numberOfSeats": 232 },
+	{ "id": 8, "location": "B2", "numberOfSeats": 49 },
+	{ "id": 9, "location": "B3", "numberOfSeats": 136 },
+	{ "id": 10, "location": "D2", "numberOfSeats": 238 },
+	{ "id": 11, "location": "D1", "numberOfSeats": 76 },
+	{ "id": 12, "location": "F1", "numberOfSeats": 102 }
+]

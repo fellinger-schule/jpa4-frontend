@@ -5,6 +5,7 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { CustomerCenter } from "./components/CustomerCenter";
 import { RecentMovies } from "./components/RecentMovies";
+import { RecentShows } from "./components/RecentShows";
 
 export interface ICustomer {
 	id: number;
@@ -19,6 +20,16 @@ export interface IMovie {
 	rating: number;
 }
 
+export interface IHall {
+	numberOfSeats: number;
+	location: string;
+}
+
+export interface IShow {
+	movie: IMovie;
+	hall: IHall;
+}
+
 function TabContent(props: any) {
 	switch (props.tabName) {
 		case "kassa": {
@@ -31,6 +42,10 @@ function TabContent(props: any) {
 		}
 		case "movies": {
 			return <RecentMovies />;
+			break;
+		}
+		case "shows": {
+			return <RecentShows />;
 			break;
 		}
 		default:
@@ -72,6 +87,15 @@ function App() {
 							href="#"
 						>
 							Aktuelle Filme
+						</a>
+					</li>
+					<li className="nav-item">
+						<a
+							className={`nav-link ${activeTab == "shows" ? "active" : ""}`}
+							onClick={() => setActiveTab("shows")}
+							href="#"
+						>
+							Vorstellungen
 						</a>
 					</li>
 				</ul>
