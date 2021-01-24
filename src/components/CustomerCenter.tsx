@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Container, Row, Col, InputGroup, FormControl, Form, Button, Card } from "react-bootstrap";
-import { updateTypePredicateNodeWithModifier } from "typescript";
 import { ICustomer } from "../App";
 import fa_usericon from "../assets/fa_usericon.png";
 
