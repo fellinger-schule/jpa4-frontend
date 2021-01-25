@@ -6,12 +6,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { CustomerCenter } from "./components/CustomerCenter";
 import { RecentMovies } from "./components/RecentMovies";
 import { RecentShows } from "./components/RecentShows";
+import { BoxOffice } from "./components/BoxOffice";
 
 export interface ICustomer {
 	id: number;
 	name: string;
 	numberOfVisits: number;
-	premiumStatus: number;
+	premiumStatus: boolean;
 }
 export interface IMovie {
 	id: number;
@@ -26,14 +27,23 @@ export interface IHall {
 }
 
 export interface IShow {
-	movie: IMovie;
-	hall: IHall;
+	id: number;
+	movieTitle: string;
+	hallLocation: string;
+	date: string;
+}
+
+export interface ISeat {
+	id: number;
+	label: string;
+	category: number;
+	price?: number;
 }
 
 function TabContent(props: any) {
 	switch (props.tabName) {
 		case "kassa": {
-			return <h1>hallo bei der kassa</h1>;
+			return <BoxOffice />;
 			break;
 		}
 		case "kundencenter": {

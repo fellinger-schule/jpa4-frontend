@@ -3,6 +3,7 @@ import { ListGroup, Row, Col, Modal, Table, Form, Button, Card } from "react-boo
 import { IMovie } from "../App";
 import mockHalls from "../mock/halls.json";
 import mockMovies from "../mock/movieList.json";
+import mockShows from "../mock/shows.json";
 
 function addNewShow(movieId: number, hallId: number, timestamp: number) {
 	//TODO: be implemented
@@ -15,13 +16,13 @@ export function RecentShows() {
 	const [displayAddModal, setDisplayAddModal] = useState(false);
 	const [movieList, setMovieList] = useState(mockMovies);
 	const [hallList, setHallList] = useState(mockHalls);
-	const [showList, setShowList] = useState([{ movieTitle: "Terminator 2", hallLocation: "2A" }]);
+	const [showList, setShowList] = useState(mockShows);
 
 	return (
 		<>
 			<div className="mx-auto" style={{ width: "50em", paddingTop: "2em" }}>
 				<Button className="btn-block" onClick={() => setDisplayAddModal(true)}>
-					Film hinzufügen
+					Vorstellung hinzufügen
 				</Button>
 				<hr></hr>
 				<Table striped bordered hover>
@@ -31,6 +32,7 @@ export function RecentShows() {
 							<th>#</th>
 							<th>Film</th>
 							<th>Halle</th>
+							<th>Datum</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -39,6 +41,7 @@ export function RecentShows() {
 							<td>{index}</td>
 							<td>{show.movieTitle}</td>
 							<td>{show.hallLocation}</td>
+							<td>{show.date}</td>
 							<td>
 								<Button variant="danger" size="sm">
 									✕
