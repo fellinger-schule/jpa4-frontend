@@ -38,6 +38,15 @@ export interface ISeat {
 	label: string;
 	category: number;
 	price?: number;
+	isTaken: boolean;
+}
+
+export interface ITicket {
+	id: number;
+	customerId: number;
+	showId: number;
+	seatId: number;
+	price?: number;
 }
 
 function TabContent(props: any) {
