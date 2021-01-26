@@ -5,9 +5,23 @@ import mockHalls from "../mock/halls.json";
 import mockMovies from "../mock/movieList.json";
 import mockShows from "../mock/shows.json";
 
-function addNewShow(movieId: number, hallId: number, timestamp: number) {
-	//TODO: be implemented
+function formatDate(ds: string) {
+	if (ds == null) {
+		return "";
+	}
+
+	const options = {
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+		hour: "numeric",
+		minute: "numeric",
+		hour12: false,
+	};
+
+	return Intl.DateTimeFormat("de", options).format(Date.parse(ds));
 }
+
 export function RecentShows() {
 	var tmpMovieId = -1;
 	var tmpHallId = -1;
@@ -17,6 +31,19 @@ export function RecentShows() {
 	const [movieList, setMovieList] = useState(mockMovies);
 	const [hallList, setHallList] = useState(mockHalls);
 	const [showList, setShowList] = useState(mockShows);
+
+	function addNewShow(movieId: number, hallId: number, timestamp: number) {
+		//TODO: be implemented
+	}
+
+	function removeShow(showId: number) {
+		//TODO: be implemented
+		getAllShows(); //get new version of the list
+	}
+
+	function getAllShows() {
+		//TODO: be implemented
+	}
 
 	return (
 		<>
@@ -41,9 +68,9 @@ export function RecentShows() {
 							<td>{index}</td>
 							<td>{show.movieTitle}</td>
 							<td>{show.hallLocation}</td>
-							<td>{show.date}</td>
+							<td>{formatDate(show.date)}</td>
 							<td>
-								<Button variant="danger" size="sm">
+								<Button variant="danger" size="sm" onClick={() => removeShow(show.id)}>
 									✕
 								</Button>
 							</td>

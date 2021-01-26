@@ -14,6 +14,18 @@ export function RecentMovies() {
 
 	const [movieList, setMovieList] = useState(mockMovieList);
 
+	function getAllMovies() {
+		//TODO: be implemented
+	}
+
+	function addNewMovie(title: string, duration: number, rating: number, imdb_id?: string) {
+		//TODO: be implemented
+	}
+
+	function removeMovie(movieId: number) {
+		//TODO: be implemented
+	}
+
 	return (
 		<>
 			<div className="mx-auto" style={{ width: "50em", paddingTop: "2em" }}>

@@ -15,6 +15,7 @@ import { IMovie } from "../App";
 import { IShow } from "../App";
 import { ICustomer } from "../App";
 import { ISeat } from "../App";
+import { ITicket } from "../App";
 import fa_usericon from "../assets/fa_usericon.png";
 import mockShows from "../mock/shows.json";
 import mockCustomers from "../mock/customers.json";
@@ -51,6 +52,8 @@ export function BoxOffice() {
 		setActiveShow(show);
 		setAvailableSeats(mockSeats as ISeat[]);
 	}
+
+	function buyTicket(customerId: number, showId: number, seatId: number) {}
 
 	return (
 		<>

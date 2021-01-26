@@ -29,7 +29,9 @@ export function CustomerCenter() {
 		setWorkingCustomer(emptyCustomer);
 	}
 
-	function deleteCustomer() {
+	function addCustomer(name: string, numberOfVisits: number, premiumStatus: boolean) {}
+
+	function deleteCustomer(customerId: number) {
 		clearFields();
 		//TODO: delete customer and maybe display a success modal
 	}
