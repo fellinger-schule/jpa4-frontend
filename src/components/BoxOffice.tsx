@@ -27,7 +27,7 @@ function formatDate(ds: string) {
 	}
 
 	const options = {
-		year: "numeric",
+		year: "2-digit",
 		month: "2-digit",
 		day: "2-digit",
 		hour: "numeric",
@@ -35,7 +35,8 @@ function formatDate(ds: string) {
 		hour12: false,
 	};
 
-	return Intl.DateTimeFormat("de", options).format(Date.parse(ds));
+	//return Intl.DateTimeFormat("de", options).format(Date.parse(ds));
+	return ds;
 }
 export function BoxOffice() {
 	var customers = mockCustomers;

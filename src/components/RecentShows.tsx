@@ -19,7 +19,7 @@ function formatDate(ds: string) {
 		hour12: false,
 	};
 
-	return Intl.DateTimeFormat("de", options).format(Date.parse(ds));
+	return ds;
 }
 
 export function RecentShows() {
