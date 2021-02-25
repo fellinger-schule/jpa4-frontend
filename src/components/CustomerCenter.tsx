@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Container, Row, Col, InputGroup, FormControl, Form, Button, Card } from "react-bootstrap";
 import { ICustomer } from "../App";
+import { API_URL } from "../App";
 import fa_usericon from "../assets/fa_usericon.png";
 
 function deepCopy(obj: any) {
@@ -8,20 +9,33 @@ function deepCopy(obj: any) {
 }
 
 export function CustomerCenter() {
-	const emptyCustomer = { id: 0, name: "", numberOfVisits: 0, premiumStatus: 0 };
+	let tmpCustomer = { id: 0, name: "", premiumStatus: false, numberOfVisits: 0 };
+	const emptyCustomer = { id: 0, name: "", numberOfVisits: 0, premiumStatus: false };
 
 	const [newUserMode, setNewUserMode] = useState(true);
 	const [deleteModalActive, setDeleteModalActive] = useState(true);
-	const [workingCustomer, setWorkingCustomer] = useState(emptyCustomer);
+	const [workingCustomer, setWorkingCustomer] = useState(emptyCustomer as ICustomer);
 
 	function onIdInputChanged(id: string) {
 		if (id != "") {
 			console.log("newusermode disabled");
 			setNewUserMode(false);
-			clearFields();
+			fetch(`${API_URL}/Customer/CustomerByID/${id}`)
+				.then((res) => res.json())
+				.then(
+					(data) =>
+						data.map((elm: any) => ({
+							id: elm.id,
+							name: elm.name,
+							numberOfVisits: elm.numberOfVisits,
+							premiumStatus: elm.isPrimeMember,
+						})) as ICustomer
+				)
+				.then((data) => setWorkingCustomer(data));
+
+			//clearFields();
 		} else {
 			setNewUserMode(true);
-			//TODO: fetch data and place into the locked form
 		}
 	}
 
@@ -29,11 +43,22 @@ export function CustomerCenter() {
 		setWorkingCustomer(emptyCustomer);
 	}
 
-	function addCustomer(name: string, numberOfVisits: number, premiumStatus: boolean) {}
+	function addCustomer(name: string, numberOfVisits: number, premiumStatus: boolean) {
+		fetch(`${API_URL}/Customer/CustomerAdd`, {
+			method: "POST",
+			body: JSON.stringify({
+				name: name,
+				numberOfVisits: numberOfVisits,
+				isPremium: premiumStatus,
+			}),
+		}).then((res) => {
+			console.log("Movie added. Response: ", res);
+		});
+	}
 
 	function deleteCustomer(customerId: number) {
 		clearFields();
-		//TODO: delete customer and maybe display a success modal
+		fetch(`${API_URL}/Customer/CustomerDelete/${customerId}`);
 	}
 
 	return (
@@ -97,7 +122,7 @@ export function CustomerCenter() {
 									<Form.Label>Mitgliedschaft</Form.Label>
 									<Form.Control
 										as="select"
-										value={workingCustomer.premiumStatus}
+										value={workingCustomer.premiumStatus ? 0 : 1}
 										onInput={(evt: any) => {
 											let tmp = deepCopy(workingCustomer);
 											tmp.premiumStatus = evt.target.value;

@@ -53,7 +53,7 @@ export function BoxOffice() {
 		setAvailableSeats(mockSeats as ISeat[]);
 	}
 
-	function buyTicket(customerId: number, showId: number, seatId: number) {}
+	function buyTicket(customerId: number, showId: number, seatId: number) { }
 
 	return (
 		<>
@@ -125,8 +125,8 @@ export function BoxOffice() {
 															activeCustomer.premiumStatus == undefined
 																? ""
 																: activeCustomer.premiumStatus == true
-																? "Premium"
-																: "Standard"
+																	? "Premium"
+																	: "Standard"
 														}
 													/>
 												</Col>
