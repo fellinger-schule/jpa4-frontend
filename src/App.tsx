@@ -8,20 +8,24 @@ import { RecentMovies } from "./components/RecentMovies";
 import { RecentShows } from "./components/RecentShows";
 import { BoxOffice } from "./components/BoxOffice";
 
+export const API_URL = "";
+
 export interface ICustomer {
 	id: number;
 	name: string;
 	numberOfVisits: number;
-	premiumStatus: boolean;
+	isPremium: boolean;
 }
 export interface IMovie {
 	id: number;
 	title: string;
 	imdb_id?: string;
 	rating: number;
+	duration: number;
 }
 
 export interface IHall {
+	id: number;
 	numberOfSeats: number;
 	location: string;
 }

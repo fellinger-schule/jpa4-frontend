@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ListGroup, Row, Col, Modal, Table, Form, Button, Card } from "react-bootstrap";
-import { IMovie } from "../App";
-import mockHalls from "../mock/halls.json";
-import mockMovies from "../mock/movieList.json";
-import mockShows from "../mock/shows.json";
+import { IMovie, IHall, IShow } from "../App";
+import { API_URL } from "../App";
 
 function formatDate(ds: string) {
 	if (ds == null) {
@@ -18,31 +16,90 @@ function formatDate(ds: string) {
 		minute: "numeric",
 		hour12: false,
 	};
-
-	return Intl.DateTimeFormat("de", options).format(Date.parse(ds));
+	let date = new Date(Number(ds));
+	if (date) return Intl.DateTimeFormat("de", options).format(date);
+	else return "";
 }
 
-export function RecentShows() {
-	var tmpMovieId = -1;
-	var tmpHallId = -1;
-	var tmpDate = -1;
+var tmpMovieId: number;
+var tmpHallId: number;
+var tmpDate: number;
 
+export function RecentShows() {
 	const [displayAddModal, setDisplayAddModal] = useState(false);
-	const [movieList, setMovieList] = useState(mockMovies);
-	const [hallList, setHallList] = useState(mockHalls);
-	const [showList, setShowList] = useState(mockShows);
+	const [movieList, setMovieList] = useState([] as IMovie[]);
+	const [hallList, setHallList] = useState([] as IHall[]);
+	const [showList, setShowList] = useState([] as IShow[]);
+	const [isDateCorrect, setDateCorrect] = useState(false);
+
+	useEffect(() => {
+		getAllMovies();
+		getAllHalls();
+		getAllShows();
+	}, []);
+
+	function getAllMovies() {
+		fetch(`${API_URL}/Movie/GetMovie`)
+			.then((response) => response.json())
+			.then((data) =>
+				data.map((elm: any) => ({ id: elm.id, title: elm.name, rating: elm.rating } as IMovie))
+			)
+			.then((data) => setMovieList(data));
+	}
+
+	function getAllHalls() {
+		fetch(`${API_URL}/Hall/GetHall`)
+			.then((response) => response.json())
+			.then((data) =>
+				data.map(
+					(elm: any) =>
+						({ id: elm.id, location: elm.location, numberOfSeats: elm.numberOfSeats } as IHall)
+				)
+			)
+			.then((data) => setHallList(data));
+	}
 
 	function addNewShow(movieId: number, hallId: number, timestamp: number) {
-		//TODO: be implemented
+		if (!tmpMovieId || !tmpHallId || !tmpDate) return;
+		let data = JSON.stringify({
+			id: 0, //will get generated on backend
+			hallId: hallId,
+			hallName: "",
+			movieId: movieId,
+			movieTitle: "",
+			showTime: `${timestamp}`,
+		});
+		fetch(`${API_URL}/Show/ShowAdd`, {
+			method: "POST",
+			body: data,
+			headers: {
+				"Content-Type": "application/json",
+			},
+		})
+			.then((res) => console.log(res))
+			.then(() => getAllShows());
 	}
 
 	function removeShow(showId: number) {
-		//TODO: be implemented
-		getAllShows(); //get new version of the list
+		fetch(`${API_URL}/Show/ShowDelete/${showId}`, {
+			method: "DELETE",
+		})
+			.then((res) => console.log(res))
+			.then(() => getAllShows());
 	}
 
 	function getAllShows() {
-		//TODO: be implemented
+		fetch(`${API_URL}/Show/GetShow`)
+			.then((res) => res.json())
+			.then((data) =>
+				data.map((elm: any) => ({
+					id: elm.id,
+					movieTitle: elm.movieTitle,
+					hallLocation: elm.hallName,
+					date: elm.showTime,
+				}))
+			)
+			.then((data) => setShowList(data));
 	}
 
 	return (
@@ -91,8 +148,12 @@ export function RecentShows() {
 									<Form.Label>Film</Form.Label>
 									<Form.Control
 										as="select"
-										onChange={(evt) => (tmpMovieId = Number(evt.target.value))}
+										onChange={(evt) => {
+											tmpMovieId = Number(evt.target.value);
+											console.log(tmpMovieId);
+										}}
 									>
+										<option value={-1}></option>
 										{movieList.map((movie) => (
 											<option value={movie.id}>{movie.title}</option>
 										))}
@@ -106,6 +167,7 @@ export function RecentShows() {
 										as="select"
 										onChange={(evt) => (tmpHallId = Number(evt.target.value))}
 									>
+										<option value={-1}></option>
 										{hallList.map((hall) => (
 											<option value={hall.id}>
 												{hall.location} ({hall.numberOfSeats})
@@ -120,8 +182,18 @@ export function RecentShows() {
 								<Form.Group>
 									<Form.Label>Datum</Form.Label>
 									<Form.Control
+										isInvalid={!isDateCorrect}
+										isValid={isDateCorrect}
 										placeholder="2015-10-12 12:00:00"
-										onChange={(evt) => (tmpDate = Date.parse(evt.target.value))}
+										onChange={(evt) => {
+											let _tmpDate = Date.parse(evt.target.value);
+											if (isNaN(_tmpDate)) {
+												setDateCorrect(false);
+											} else {
+												setDateCorrect(true);
+												tmpDate = _tmpDate;
+											}
+										}}
 									/>
 								</Form.Group>
 							</Col>
