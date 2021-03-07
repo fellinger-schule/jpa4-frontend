@@ -9,8 +9,8 @@ function deepCopy(obj: any) {
 }
 
 export function CustomerCenter() {
-	let tmpCustomer = { id: 0, name: "", premiumStatus: false, numberOfVisits: 0 };
-	const emptyCustomer = { id: 0, name: "", numberOfVisits: 0, premiumStatus: false };
+	let tmpCustomer = { id: 0, name: "", isPremium: false, numberOfVisits: 0 };
+	const emptyCustomer = { id: 0, name: "", numberOfVisits: 0, isPremium: false };
 
 	const [newUserMode, setNewUserMode] = useState(true);
 	const [deleteModalActive, setDeleteModalActive] = useState(true);
@@ -18,47 +18,52 @@ export function CustomerCenter() {
 
 	function onIdInputChanged(id: string) {
 		if (id != "") {
-			console.log("newusermode disabled");
-			setNewUserMode(false);
-			fetch(`${API_URL}/Customer/CustomerByID/${id}`)
-				.then((res) => res.json())
-				.then(
-					(data) =>
-						data.map((elm: any) => ({
-							id: elm.id,
-							name: elm.name,
-							numberOfVisits: elm.numberOfVisits,
-							premiumStatus: elm.isPrimeMember,
-						})) as ICustomer
-				)
-				.then((data) => setWorkingCustomer(data));
+			//ID can only be numbers, so check for that and avoid useless GET's
+			if (!id.match(/^[0-9]+$/)) return;
 
-			//clearFields();
+			setNewUserMode(false);
+			fetch(`${API_URL}/Customer/GetCustomerByID/${id}`)
+				.then((res) => res.json())
+				.then((data) => setWorkingCustomer(data))
+				.catch((error) => {
+					console.log("CustomerCenter Api Fetch error", error);
+					clearFields();
+				});
 		} else {
-			setNewUserMode(true);
+			if (newUserMode == false) {
+				clearFields();
+				setNewUserMode(true);
+			}
 		}
 	}
 
 	function clearFields() {
-		setWorkingCustomer(emptyCustomer);
+		setWorkingCustomer({} as ICustomer);
 	}
 
-	function addCustomer(name: string, numberOfVisits: number, premiumStatus: boolean) {
+	function addCustomer(name: string, numberOfVisits: number, isPremium: boolean) {
+		let newId = Math.random() * 2 ** 64;
 		fetch(`${API_URL}/Customer/CustomerAdd`, {
 			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
 			body: JSON.stringify({
+				id: newId,
 				name: name,
 				numberOfVisits: numberOfVisits,
-				isPremium: premiumStatus,
+				isPremium: isPremium,
 			}),
 		}).then((res) => {
-			console.log("Movie added. Response: ", res);
+			console.log("Customer added. Response: ", res);
 		});
 	}
 
 	function deleteCustomer(customerId: number) {
 		clearFields();
-		fetch(`${API_URL}/Customer/CustomerDelete/${customerId}`);
+		fetch(`${API_URL}/Customer/CustomerDelete/${customerId}`, { method: "DELETE" }).then((res) =>
+			console.log(res)
+		);
 	}
 
 	return (
@@ -92,7 +97,7 @@ export function CustomerCenter() {
 										<Form.Label>Vollständiger Name</Form.Label>
 										<Form.Control
 											//placeholder="John Doe"
-											value={workingCustomer.name}
+											value={workingCustomer.name || ""}
 											onInput={(evt: any) => {
 												let tmp = deepCopy(workingCustomer);
 												tmp.name = evt.target.value;
@@ -108,7 +113,7 @@ export function CustomerCenter() {
 								<Form.Group as={Col} controlId="formGridCity">
 									<Form.Label>Anzahl der Besuche</Form.Label>
 									<Form.Control
-										value={workingCustomer.numberOfVisits}
+										value={workingCustomer.numberOfVisits || ""}
 										onInput={(evt: any) => {
 											let tmp = deepCopy(workingCustomer);
 											tmp.numberOfVisits = evt.target.value;
@@ -122,10 +127,11 @@ export function CustomerCenter() {
 									<Form.Label>Mitgliedschaft</Form.Label>
 									<Form.Control
 										as="select"
-										value={workingCustomer.premiumStatus ? 0 : 1}
+										value={workingCustomer.isPremium ? 0 : 1}
 										onInput={(evt: any) => {
+											console.log(evt.target.value);
 											let tmp = deepCopy(workingCustomer);
-											tmp.premiumStatus = evt.target.value;
+											tmp.isPremium = evt.target.value;
 											setWorkingCustomer(tmp);
 										}}
 										disabled={!newUserMode}
@@ -138,12 +144,28 @@ export function CustomerCenter() {
 							<hr></hr>
 							<Row>
 								<Col>
-									<Button block variant="danger" disabled={newUserMode}>
+									<Button
+										block
+										variant="danger"
+										disabled={newUserMode}
+										onClick={() => deleteCustomer(workingCustomer.id)}
+									>
 										Kunde löschen
 									</Button>
 								</Col>
 								<Col>
-									<Button block variant="primary" disabled={!newUserMode}>
+									<Button
+										block
+										variant="primary"
+										disabled={!newUserMode}
+										onClick={() => {
+											addCustomer(
+												workingCustomer.name,
+												workingCustomer.numberOfVisits,
+												workingCustomer.isPremium
+											);
+										}}
+									>
 										Neuen Kunden hinzufügen
 									</Button>
 								</Col>

@@ -38,7 +38,7 @@ function formatDate(ds: string) {
 	return Intl.DateTimeFormat("de", options).format(Date.parse(ds));
 }
 export function BoxOffice() {
-	var customers = mockCustomers;
+	var customers = [] as ICustomer[];
 	const [activeShow, setActiveShow] = useState({} as IShow);
 	const [activeCustomer, setActiveCustomer] = useState({} as ICustomer);
 	const [availableSeats, setAvailableSeats] = useState(mockSeats as ISeat[]);
@@ -122,9 +122,9 @@ export function BoxOffice() {
 													<Form.Control
 														disabled
 														value={
-															activeCustomer.premiumStatus == undefined
+															activeCustomer.isPremium == undefined
 																? ""
-																: activeCustomer.premiumStatus == true
+																: activeCustomer.isPremium == true
 																? "Premium"
 																: "Standard"
 														}
