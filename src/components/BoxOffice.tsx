@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	Container,
 	Row,
@@ -11,14 +11,8 @@ import {
 	Button,
 	Modal,
 } from "react-bootstrap";
-import { IMovie } from "../App";
-import { IShow } from "../App";
-import { ICustomer } from "../App";
-import { ISeat } from "../App";
-import { ITicket } from "../App";
+import { IMovie, IShow, ICustomer, ISeat, ITicket, API_URL } from "../App";
 import fa_usericon from "../assets/fa_usericon.png";
-import mockShows from "../mock/shows.json";
-import mockCustomers from "../mock/customers.json";
 import mockSeats from "../mock/seats.json";
 
 function formatDate(ds: string) {
@@ -34,18 +28,53 @@ function formatDate(ds: string) {
 		minute: "numeric",
 		hour12: false,
 	};
-
-	return Intl.DateTimeFormat("de", options).format(Date.parse(ds));
+	let date = new Date(Number(ds));
+	if (date) return Intl.DateTimeFormat("de", options).format(date);
+	else return "";
 }
+
 export function BoxOffice() {
 	var customers = [] as ICustomer[];
+	const [showList, setShowList] = useState([] as IShow[]);
 	const [activeShow, setActiveShow] = useState({} as IShow);
 	const [activeCustomer, setActiveCustomer] = useState({} as ICustomer);
 	const [availableSeats, setAvailableSeats] = useState(mockSeats as ISeat[]);
 	const [buyModalOpen, setBuyModalOpen] = useState(false);
 
+	useEffect(() => {
+		getAllShows();
+	}, []);
+
+	function getAllShows() {
+		fetch(`${API_URL}/Show/GetShow`)
+			.then((res) => res.json())
+			.then((data) =>
+				data.map((elm: any) => ({
+					id: elm.id,
+					movieTitle: elm.movieTitle,
+					hallLocation: elm.hallName,
+					date: elm.showTime,
+				}))
+			)
+			.then((data) => setShowList(data));
+	}
+
 	function onIdInput(ids: string) {
-		setActiveCustomer(customers.find((c) => c.id == Number(ids)) || ({} as ICustomer));
+		if (!ids.match(/^[0-9]+$/)) return;
+
+		fetch(`${API_URL}/Customer/GetCustomerByID/${ids}`)
+			.then((res) => res.json())
+			.then((data) =>
+				setActiveCustomer({
+					id: data.id,
+					name: data.name,
+					numberOfVisits: data.numberOfVisits,
+					isPremium: data.primeMember,
+				} as ICustomer)
+			)
+			.catch((error) => {
+				console.log("BoxOffice Api Fetch error", error);
+			});
 	}
 
 	function onShowSelect(show: IShow) {
@@ -53,14 +82,22 @@ export function BoxOffice() {
 		setAvailableSeats(mockSeats as ISeat[]);
 	}
 
-	function buyTicket(customerId: number, showId: number, seatId: number) {}
+	function addNewTicket(custId: number, showId: number) {
+		fetch(`${API_URL}/Ticket/TicketAdd`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ customerId: custId, showId: showId }),
+		}).then((res) => console.log(res));
+	}
 
 	return (
 		<>
 			<Row>
 				<Col className="border-right">
 					<ListGroup style={{ paddingTop: "2em" }} variant="flush">
-						{mockShows.map((show, index) => (
+						{showList.map((show, index) => (
 							<ListGroup.Item
 								action
 								active={show.id == activeShow.id}
@@ -225,7 +262,15 @@ export function BoxOffice() {
 					<Button variant="secondary" onClick={() => setBuyModalOpen(false)}>
 						Abbrechen
 					</Button>
-					<Button variant="success">Bezahlen</Button>
+					<Button
+						variant="success"
+						onClick={() => {
+							setBuyModalOpen(false);
+							addNewTicket(activeCustomer.id, activeShow.id);
+						}}
+					>
+						Bezahlen
+					</Button>
 				</Modal.Footer>
 			</Modal>
 		</>
