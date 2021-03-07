@@ -210,7 +210,13 @@ export function RecentShows() {
 					<Button variant="secondary" onClick={() => setDisplayAddModal(false)}>
 						Abbrechen
 					</Button>
-					<Button variant="primary" onClick={() => addNewShow(tmpMovieId, tmpHallId, tmpDate)}>
+					<Button
+						variant="primary"
+						onClick={() => {
+							addNewShow(tmpMovieId, tmpHallId, tmpDate);
+							setDisplayAddModal(false);
+						}}
+					>
 						Hinzufügen
 					</Button>
 				</Modal.Footer>
