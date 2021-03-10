@@ -21,12 +21,12 @@ function formatDate(ds: string) {
 	}
 
 	const options = {
-		year: "numeric",
-		month: "2-digit",
-		day: "2-digit",
-		hour: "numeric",
-		minute: "numeric",
-		hour12: false,
+		year: "numeric" as const,
+		month: "2-digit" as const,
+		day: "2-digit" as const,
+		hour: "numeric" as const,
+		minute: "numeric" as const,
+		hour12: false as const,
 	};
 	let date = new Date(Number(ds));
 	if (date) return Intl.DateTimeFormat("de", options).format(date);
@@ -162,8 +162,8 @@ export function BoxOffice() {
 															activeCustomer.isPremium == undefined
 																? ""
 																: activeCustomer.isPremium == true
-																? "Premium"
-																: "Standard"
+																	? "Premium"
+																	: "Standard"
 														}
 													/>
 												</Col>
